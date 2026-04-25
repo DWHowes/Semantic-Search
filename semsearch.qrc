@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/cross.png</file>
+    <file>icons/document-pdf.png</file>
+    <file>icons/magnifier-left-btn.png</file>
+  </qresource>
+</RCC>
