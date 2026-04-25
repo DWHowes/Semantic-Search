@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1302</width>
+    <height>1179</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPdfView" name="pdfView" native="true">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>40</y>
+      <width>871</width>
+      <height>1051</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>421</x>
+      <y>11</y>
+      <width>861</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="queryLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblQuery">
+       <property name="text">
+        <string>Query:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="editQuery"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="btnSearch">
+       <property name="text">
+        <string>Search</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../semsearch.qrc">
+         <normaloff>:/icons/icons/magnifier-left-btn.png</normaloff>:/icons/icons/magnifier-left-btn.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>12</y>
+      <width>401</width>
+      <height>1081</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="lblResults">
+       <property name="text">
+        <string>Query Results</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tblResults"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1302</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuOpen_Recent">
+     <property name="title">
+      <string>Open &amp;Recent</string>
+     </property>
+    </widget>
+    <addaction name="actionOpen_PDF"/>
+    <addaction name="menuOpen_Recent"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen_PDF_Tbar"/>
+   <addaction name="separator"/>
+   <addaction name="actionClose_App_Tbar"/>
+  </widget>
+  <action name="actionOpen_PDF">
+   <property name="text">
+    <string>&amp;Open PDF...</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="actionOpen_PDF_Tbar">
+   <property name="icon">
+    <iconset resource="../semsearch.qrc">
+     <normaloff>:/icons/icons/document-pdf.png</normaloff>:/icons/icons/document-pdf.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open PDF</string>
+   </property>
+   <property name="iconText">
+    <string>Open PDF</string>
+   </property>
+   <property name="toolTip">
+    <string>Open PDF file</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionClose_App_Tbar">
+   <property name="icon">
+    <iconset resource="../semsearch.qrc">
+     <normaloff>:/icons/icons/cross.png</normaloff>:/icons/icons/cross.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close application</string>
+   </property>
+   <property name="iconText">
+    <string>Close application</string>
+   </property>
+   <property name="toolTip">
+    <string>Close application</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionOpen_Recent">
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+  </action>
+  <action name="actionfiles">
+   <property name="text">
+    <string>[none]</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QPdfView</class>
+   <extends>QWidget</extends>
+   <header>qpdfview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../semsearch.qrc"/>
+ </resources>
+ <connections/>
+</ui>
