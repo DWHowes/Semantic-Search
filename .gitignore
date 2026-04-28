@@ -3,3 +3,4 @@
 generated_files
 __pychache__
 semsearch_rc.py
+*.json
