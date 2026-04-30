@@ -1,6 +1,6 @@
 .venv
 .vscode
 generated_files
-__pychache__
+__pycache__
 semsearch_rc.py
 *.json
