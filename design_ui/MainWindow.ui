@@ -17,8 +17,8 @@
    <widget class="QLabel" name="lblResults">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>9</y>
+      <x>10</x>
+      <y>10</y>
       <width>72</width>
       <height>16</height>
      </rect>

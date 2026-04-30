@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.lblResults = QLabel(self.centralwidget)
         self.lblResults.setObjectName(u"lblResults")
-        self.lblResults.setGeometry(QRect(9, 9, 72, 16))
+        self.lblResults.setGeometry(QRect(10, 10, 72, 16))
         self.lblQuery = QLabel(self.centralwidget)
         self.lblQuery.setObjectName(u"lblQuery")
         self.lblQuery.setGeometry(QRect(390, 9, 35, 16))
