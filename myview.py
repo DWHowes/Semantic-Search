@@ -43,6 +43,7 @@ class MyPdfView(QPdfView):
     def documentStatusChanged(self, status)->None:
         if status == QPdfDocument.Status.Ready:
             self.updateDocumentLayout()
+            # self.setZoomMode(QPdfView.ZoomMode.FitInView)
 
     # updateDocumentLayout source - https://stackoverflow.com/a/79231842
     # See that link for an explanation of this method.

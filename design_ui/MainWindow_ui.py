@@ -17,10 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtPdfWidgets import QPdfView
-from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
-    QLineEdit, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QStatusBar, QTableWidget,
-    QTableWidgetItem, QToolBar, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
+    QToolBar, QWidget)
 import semsearch_rc
 
 class Ui_MainWindow(object):
@@ -50,49 +50,30 @@ class Ui_MainWindow(object):
         self.actionfiles.setObjectName(u"actionfiles")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.pdfView = QPdfView(self.centralwidget)
-        self.pdfView.setObjectName(u"pdfView")
-        self.pdfView.setGeometry(QRect(420, 40, 871, 1051))
-        self.layoutWidget = QWidget(self.centralwidget)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(421, 11, 861, 26))
-        self.queryLayout = QGridLayout(self.layoutWidget)
-        self.queryLayout.setObjectName(u"queryLayout")
-        self.queryLayout.setContentsMargins(0, 0, 0, 0)
-        self.lblQuery = QLabel(self.layoutWidget)
+        self.lblResults = QLabel(self.centralwidget)
+        self.lblResults.setObjectName(u"lblResults")
+        self.lblResults.setGeometry(QRect(9, 9, 72, 16))
+        self.lblQuery = QLabel(self.centralwidget)
         self.lblQuery.setObjectName(u"lblQuery")
-
-        self.queryLayout.addWidget(self.lblQuery, 0, 0, 1, 1)
-
-        self.editQuery = QLineEdit(self.layoutWidget)
+        self.lblQuery.setGeometry(QRect(390, 9, 35, 16))
+        self.editQuery = QLineEdit(self.centralwidget)
         self.editQuery.setObjectName(u"editQuery")
-
-        self.queryLayout.addWidget(self.editQuery, 0, 1, 1, 1)
-
-        self.btnSearch = QPushButton(self.layoutWidget)
+        self.editQuery.setGeometry(QRect(431, 10, 781, 22))
+        self.editQuery.setMaximumSize(QSize(16777215, 16777215))
+        self.btnSearch = QPushButton(self.centralwidget)
         self.btnSearch.setObjectName(u"btnSearch")
+        self.btnSearch.setGeometry(QRect(1218, 9, 75, 24))
         icon2 = QIcon()
         icon2.addFile(u":/icons/icons/magnifier-left-btn.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.btnSearch.setIcon(icon2)
-
-        self.queryLayout.addWidget(self.btnSearch, 0, 2, 1, 1)
-
-        self.layoutWidget1 = QWidget(self.centralwidget)
-        self.layoutWidget1.setObjectName(u"layoutWidget1")
-        self.layoutWidget1.setGeometry(QRect(10, 12, 401, 1081))
-        self.verticalLayout = QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.lblResults = QLabel(self.layoutWidget1)
-        self.lblResults.setObjectName(u"lblResults")
-
-        self.verticalLayout.addWidget(self.lblResults)
-
-        self.tblResults = QTableWidget(self.layoutWidget1)
+        self.tblResults = QTableWidget(self.centralwidget)
         self.tblResults.setObjectName(u"tblResults")
-
-        self.verticalLayout.addWidget(self.tblResults)
-
+        self.tblResults.setGeometry(QRect(9, 39, 371, 1061))
+        self.tblResults.setMaximumSize(QSize(375, 16777215))
+        self.pdfView = QPdfView(self.centralwidget)
+        self.pdfView.setObjectName(u"pdfView")
+        self.pdfView.setGeometry(QRect(390, 39, 903, 1054))
+        self.pdfView.setMinimumSize(QSize(0, 0))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -139,9 +120,9 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.actionOpen_Recent.setText(QCoreApplication.translate("MainWindow", u"Open Recent", None))
         self.actionfiles.setText(QCoreApplication.translate("MainWindow", u"[none]", None))
+        self.lblResults.setText(QCoreApplication.translate("MainWindow", u"Query Results", None))
         self.lblQuery.setText(QCoreApplication.translate("MainWindow", u"Query:", None))
         self.btnSearch.setText(QCoreApplication.translate("MainWindow", u"Search", None))
-        self.lblResults.setText(QCoreApplication.translate("MainWindow", u"Query Results", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"&File", None))
         self.menuOpen_Recent.setTitle(QCoreApplication.translate("MainWindow", u"Open &Recent", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))

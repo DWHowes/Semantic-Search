@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QTableWidgetItem, QHeaderView
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QTableWidgetItem, QHeaderView, QSizePolicy
 from PySide6.QtGui import QShortcut, QKeySequence, QCloseEvent, QAction
 from PySide6.QtCore import QPoint, Slot
 from PySide6.QtPdf import QPdfDocument
@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
         # Set up the PDF viewer
         self.viewer = MyPdfView(self.ui.pdfView)
         self.viewer.setGeometry(0, 0, self.ui.pdfView.geometry().width(), self.ui.pdfView.geometry().height())
+        # self.viewer.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         self.viewer.setPageMode(QPdfView.PageMode.MultiPage)
         self.viewer.setZoomMode(QPdfView.ZoomMode.FitInView)
 
@@ -220,6 +221,11 @@ class MainWindow(QMainWindow):
             event.accept()
         elif reply == QMessageBox.StandardButton.No:
             event.ignore()
+
+    # Set the correct zoom mode for the PDF viewer when the app is resized
+    def resizeEvent(self, event):
+        self.viewer.setZoomMode(QPdfView.ZoomMode.FitInView)
+        super().resizeEvent(event)
 
     # Close the application using the close button on the toolbar or selecting close from the menu.
     def close_app(self)->None:
