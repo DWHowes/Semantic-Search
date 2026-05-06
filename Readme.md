@@ -1,6 +1,6 @@
 # Semantic Search Using SBERT
 
-This application uses [SBERT](https://arxiv.org/abs/1908.10084) to demonstrate semantic searching of a PDF document. The document is loaded and parsed by the [Docling](https://www.docling.ai/)-based [SpaCy Layout](https://github.com/explosion/spacy-layout) package, with parsed data saved in a [json](https://en.wikipedia.org/wiki/JSON) file and the SBERT vector embeddings of that parsed data in a [NumPy](https://https://numpy.org/) file. Both files have the same base name as the PDF file.
+This application uses [SBERT](https://arxiv.org/abs/1908.10084) to demonstrate semantic searching of a PDF document. The document is loaded and parsed by the [Docling](https://www.docling.ai/)-based [SpaCy Layout](https://github.com/explosion/spacy-layout) package, with parsed data saved in a [json](https://en.wikipedia.org/wiki/JSON) file and the SBERT vector embeddings of that parsed data in a [NumPy](https://numpy.org/) file. Both files have the same base name as the PDF file.
 
 The user enters a query into the text box. The query text is executed by SBERT, using the parsed contents of the json file as the document corpus, with results displayed in the Query Results table. When an item in the table is selected, the PDF file jumps to the appropriate page and the selected text is highlighted with a bounding box (Figure 1).
 
