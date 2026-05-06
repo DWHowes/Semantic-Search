@@ -164,6 +164,13 @@ class MainWindow(QMainWindow):
 
         self.ui.tblResults.hideColumn(1)  
         self.ui.tblResults.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+
+        # Set the current cell to the first result in the table, and trigger the cellClicked 
+        # signal to update the PDF viewer with the bounding box data for that result.
+        target_row = 0
+        target_col = 0
+        self.ui.tblResults.setCurrentCell(target_row, target_col)  # Set visual focus
+        self.ui.tblResults.cellClicked.emit(target_row, target_col) # Trigger slots        
     
     def clear_content(self)->None:
         self.ui.editQuery.clear()
