@@ -22,7 +22,7 @@ JSON_EXT = ".json"
 NUMPY_EXT = ".npy"
 CLOSE_NAME = "Close Application"
 CLOSE_QUERY = "Are you sure you wish to proceed?"
-MISSING_FILE_TEXT = "The associated JSON file or embeddings file for this PDF could not be found. Please make sure the JSON and embeddings files are in the same directory as the PDF file, and have the same name as the PDF file with the appropriate file extensions. Selecting OK will launch the file selection dialog."
+MISSING_FILE = "The associated JSON file or SBERT embeddings file for this PDF can not be found. Clicking OK launches the file selection dialog so those files can be recreated."
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -113,7 +113,7 @@ class MainWindow(QMainWindow):
             # and open the file dialog to select the PDF file again when the user clicks OK on the warning message box.
             QMessageBox.warning(self, 
                                 "File Not Found", 
-                                MISSING_FILE_TEXT, 
+                                MISSING_FILE, 
                                 QMessageBox.StandardButton.Ok)
             self.open_PDF()
 
