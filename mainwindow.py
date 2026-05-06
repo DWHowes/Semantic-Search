@@ -105,9 +105,7 @@ class MainWindow(QMainWindow):
 
         # Open the associated JSON file and embeddings file, and enable the query text field
         if  os.path.isfile(self.json_name) and os.path.isfile(self.embeddings_name):
-            self.json_file = pd.read_json(self.json_name)
-            self.embeddings = np.load(self.embeddings_name)
-            self.ui.editQuery.setDisabled(False)
+            self.load_saved_layout()
         else:
             # Display a warning message if the associated JSON file or embeddings file cannot be found, 
             # and open the file dialog to select the PDF file again when the user clicks OK on the warning message box.
