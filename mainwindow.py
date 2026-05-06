@@ -5,6 +5,7 @@ from PySide6.QtPdf import QPdfDocument
 from PySide6.QtPdfWidgets import QPdfView
 
 import pandas as pd
+import numpy as np
 
 import os
 from functools import partial
@@ -14,11 +15,14 @@ from recentfiles import RecentFiles
 from pdflayout import PDFlayout
 from queryprocess import ProcessQuery
 from myview import MyPdfView
+from layoutstatusdlg import LayoutStatusDialog
 
 STATUS_TEXT_BASE = "Open File: "
 JSON_EXT = ".json"
+NUMPY_EXT = ".npy"
 CLOSE_NAME = "Close Application"
 CLOSE_QUERY = "Are you sure you wish to proceed?"
+MISSING_FILE_TEXT = "The associated JSON file or embeddings file for this PDF could not be found. Please make sure the JSON and embeddings files are in the same directory as the PDF file, and have the same name as the PDF file with the appropriate file extensions. Selecting OK will launch the file selection dialog."
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -30,6 +34,8 @@ class MainWindow(QMainWindow):
         self.file_name = None
         self.json_name = None
         self.json_file = None
+        self.embeddings_name = None
+        self.embeddings = None
 
         # Initialize the status bar text
         self.status_label = QLabel(STATUS_TEXT_BASE)
@@ -48,7 +54,6 @@ class MainWindow(QMainWindow):
         # Set up the PDF viewer
         self.viewer = MyPdfView(self.ui.pdfView)
         self.viewer.setGeometry(0, 0, self.ui.pdfView.geometry().width(), self.ui.pdfView.geometry().height())
-        # self.viewer.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         self.viewer.setPageMode(QPdfView.PageMode.MultiPage)
         self.viewer.setZoomMode(QPdfView.ZoomMode.FitInView)
 
@@ -91,15 +96,26 @@ class MainWindow(QMainWindow):
         self.setFixedSize(1300, 1200)
 
     @Slot(str)
+
     # Open a file selected from the recent file list
     def open_selected_file(self, path:str):
         self.file_path = path
 
         self.load_viewer()
 
-        # Open the associated JSON file
-        self.json_file = pd.read_json(self.json_name)
-        self.ui.editQuery.setDisabled(False)
+        # Open the associated JSON file and embeddings file, and enable the query text field
+        if  os.path.isfile(self.json_name) and os.path.isfile(self.embeddings_name):
+            self.json_file = pd.read_json(self.json_name)
+            self.embeddings = np.load(self.embeddings_name)
+            self.ui.editQuery.setDisabled(False)
+        else:
+            # Display a warning message if the associated JSON file or embeddings file cannot be found, 
+            # and open the file dialog to select the PDF file again when the user clicks OK on the warning message box.
+            QMessageBox.warning(self, 
+                                "File Not Found", 
+                                MISSING_FILE_TEXT, 
+                                QMessageBox.StandardButton.Ok)
+            self.open_PDF()
 
     # When a row in the result table is selected, go to the correct page and pass the
     # bounding box data to the pdf viewer.
@@ -128,7 +144,18 @@ class MainWindow(QMainWindow):
 
     # Process the query entered in the text box, updating the content of the results table.
     def query(self)->None:
-        query_df = ProcessQuery(self.json_name).query(self.ui.editQuery.text())
+        self.query_thread = ProcessQuery(self.json_file, self.embeddings, self.ui.editQuery.text())
+
+        # Connect slots for proper termination of thread and closing of the status dialog when processing is finished
+        self.query_thread.finished.connect(self.query_thread.quit)
+        self.query_thread.finished.connect(self.query_thread.deleteLater)
+        # Connect the finished signal to the on_finished method to update the results table when 
+        # processing is complete.
+        self.query_thread.finished.connect(self.on_finished)
+        
+        self.query_thread.start()
+
+    def on_finished(self, query_df:pd.DataFrame)->None:
         self.ui.tblResults.setRowCount(query_df.shape[0])
         self.ui.tblResults.setColumnCount(query_df.shape[1])
 
@@ -166,9 +193,10 @@ class MainWindow(QMainWindow):
         directory = os.path.dirname(self.file_path)
         self.file_name = os.path.basename(self.file_path)
         self.json_name = os.path.splitext(self.file_name)[0]+JSON_EXT
+        self.embeddings_name = os.path.splitext(self.file_name)[0]+NUMPY_EXT
 
         # Change the current working directory to the source directory for the pdf file
-        # This is where the parsed json file is stored
+        # This is where the parsed json and embeddings files are stored
         os.chdir(directory)
 
     # Open the PDF file selected in the Open File dialog box.
@@ -182,17 +210,50 @@ class MainWindow(QMainWindow):
 
         if self.file_path:
             self.load_viewer()
-            # If a matching json file doesn't exist in the CWD, parse the pdf using spacy-layout 
-            # and save as a json file, this  is only done the first time the PDF file is loaded
-            # This json file is used to perform the semantic search
-            if not os.path.isfile(self.json_name):
-                layout = PDFlayout()
-                layout.process_pdf(self.file_path, self.json_name)
+            # If a matching json file or embeddings file doesn't exist in the CWD, parse the PDF 
+            # using spacy-layout and save the json and embeddings files. This  is only done the 
+            # first time the PDF file is loaded 
+            # These files are used to perform the semantic search
+            if not os.path.isfile(self.json_name) or not os.path.isfile(self.embeddings_name):
+                self.create_layout()
+            # If both the json file and the embeddings file already exist, load them and enable 
+            # the query text field
+            else:
+                self.load_saved_layout()
 
-            self.json_file = pd.read_json(self.json_name)
+    # Load the saved json file and numpy file containing the parsed layout information and the 
+    # SBERT embedding vectors, respectively.
+    def load_saved_layout(self):
+        self.json_file = pd.read_json(self.json_name)
+        self.embeddings = np.load(self.embeddings_name)
+        self.ui.editQuery.setDisabled(False)
 
-            self.ui.editQuery.setDisabled(False)
+    # Create the layout of the PDF file using spacy-layout.
+    # Processing of the PDF file is done in a separate thread to avoid blocking the main application, 
+    # and a status dialog is used to display status information about the processing of the PDF file.
+    def create_layout(self):
+        self.statusDlg = LayoutStatusDialog(self)
+        self.statusDlg.show()
 
+        self.layout = PDFlayout(self.file_path)
+
+        # Connect slot the status dialog to display thread status information
+        self.layout.progress_update.connect(self.statusDlg.update_status)
+
+        # Connect slots for proper termination of thread
+        self.layout.finished.connect(self.layout.quit)
+        self.layout.finished.connect(self.layout.deleteLater)
+        self.layout.finished.connect(self.statusDlg.close)
+        # Connect slots to load the generated json file and numpy file, and enable the query text field when 
+        # processing is finished
+        self.layout.finished.connect(lambda: setattr(self, 'json_file', pd.read_json(self.json_name)))
+        self.layout.finished.connect(lambda: setattr(self, 'embeddings', np.load(self.embeddings_name)))
+        self.layout.finished.connect(lambda: self.ui.editQuery.setDisabled(False))
+        
+        self.layout.start()
+
+        self.ui.editQuery.setDisabled(True)
+    
     # Go to the first page of the PDF file.
     def home(self)->None:
         if self.file_path:
