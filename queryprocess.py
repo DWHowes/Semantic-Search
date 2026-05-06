@@ -1,24 +1,33 @@
 import torch
 import pandas as pd
+import numpy as np
+
+from PySide6.QtCore import QThread, Signal, QObject
 
 from sentence_transformers import SentenceTransformer
 
-class ProcessQuery:
-    def __init__(self, jsonfile:str)->None:
-        self.embedder = SentenceTransformer("msmarco-distilbert-base-v2")
-        # Import Dataset
-        df = pd.read_json(jsonfile)
-        self.corpus = df.get('text').tolist()       
-        self.corpus_embeddings = self.embedder.encode_document(self.corpus, convert_to_tensor=True) 
+class ProcessQuery(QThread):
+    finished = Signal(pd.DataFrame)
+    progress = Signal(str)
 
-    def query(self, querystr:str)->pd.DataFrame:
+    def __init__(self, json_df:pd.DataFrame, embedding_db:np.ndarray, querystr:str)->None:
+        super().__init__()
+
+        self.embedder = SentenceTransformer("msmarco-distilbert-base-v2")
+        self.corpus = json_df.get('text').tolist()      
+        self.embeddings = embedding_db
+        self.querystr = querystr
+
+    def run(self)->pd.DataFrame:
         cut_off = 0
 
         # Encode the query
-        query_embedding = self.embedder.encode_query(querystr, convert_to_tensor=True)
+        self.progress.emit("Generating query embeddings...")
+        query_embedding = self.embedder.encode_query(self.querystr, convert_to_tensor=True)
 
         # Use cosine-similarity and torch.topk to create an ordered dataframe
-        similarity_scores = self.embedder.similarity(query_embedding, self.corpus_embeddings)[0]
+        self.progress.emit("Generating similarity scores...")
+        similarity_scores = self.embedder.similarity(query_embedding, self.embeddings)[0]
         scores, indices = torch.topk(similarity_scores, k=len(self.corpus))
 
         ordered_df = pd.DataFrame(columns=["reptext", "srcindex"])
@@ -34,4 +43,4 @@ class ProcessQuery:
         ordered_df['reptext'] = reptext
         ordered_df['srcindex'] = src_index
 
-        return ordered_df
+        self.finished.emit(ordered_df)
