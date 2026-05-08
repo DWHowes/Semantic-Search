@@ -16,11 +16,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtPdfWidgets import QPdfView
-from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QLineEdit,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-    QToolBar, QWidget)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
+    QLineEdit, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QStatusBar, QTableWidget,
+    QTableWidgetItem, QToolBar, QWidget)
+
+from myview import MyPdfView
 import semsearch_rc
 
 class Ui_MainWindow(object):
@@ -50,30 +51,43 @@ class Ui_MainWindow(object):
         self.actionfiles.setObjectName(u"actionfiles")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+        self.gridLayout = QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.lblResults = QLabel(self.centralwidget)
         self.lblResults.setObjectName(u"lblResults")
-        self.lblResults.setGeometry(QRect(10, 10, 72, 16))
+
+        self.gridLayout.addWidget(self.lblResults, 0, 0, 1, 1)
+
         self.lblQuery = QLabel(self.centralwidget)
         self.lblQuery.setObjectName(u"lblQuery")
-        self.lblQuery.setGeometry(QRect(390, 9, 35, 16))
+
+        self.gridLayout.addWidget(self.lblQuery, 0, 1, 1, 1)
+
         self.editQuery = QLineEdit(self.centralwidget)
         self.editQuery.setObjectName(u"editQuery")
-        self.editQuery.setGeometry(QRect(431, 10, 781, 22))
         self.editQuery.setMaximumSize(QSize(16777215, 16777215))
+
+        self.gridLayout.addWidget(self.editQuery, 0, 2, 1, 1)
+
         self.btnSearch = QPushButton(self.centralwidget)
         self.btnSearch.setObjectName(u"btnSearch")
-        self.btnSearch.setGeometry(QRect(1218, 9, 75, 24))
         icon2 = QIcon()
         icon2.addFile(u":/icons/icons/magnifier-left-btn.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.btnSearch.setIcon(icon2)
+
+        self.gridLayout.addWidget(self.btnSearch, 0, 3, 1, 1)
+
         self.tblResults = QTableWidget(self.centralwidget)
         self.tblResults.setObjectName(u"tblResults")
-        self.tblResults.setGeometry(QRect(9, 39, 371, 1061))
         self.tblResults.setMaximumSize(QSize(375, 16777215))
-        self.pdfView = QPdfView(self.centralwidget)
+
+        self.gridLayout.addWidget(self.tblResults, 1, 0, 1, 1)
+
+        self.pdfView = MyPdfView(self.centralwidget)
         self.pdfView.setObjectName(u"pdfView")
-        self.pdfView.setGeometry(QRect(390, 39, 903, 1054))
-        self.pdfView.setMinimumSize(QSize(0, 0))
+
+        self.gridLayout.addWidget(self.pdfView, 1, 1, 1, 3)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
