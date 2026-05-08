@@ -8,13 +8,17 @@ import pandas as pd
 import numpy as np
 
 import os
+import sys
 from functools import partial
+
+# Add the root directory to path so the generated file can find the
+# subclassed QPdfView in the source directory.
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from generated_files.MainWindow import Ui_MainWindow
 from recentfiles import RecentFiles
 from pdflayout import PDFlayout
 from queryprocess import ProcessQuery
-from myview import MyPdfView
 from layoutstatusdlg import LayoutStatusDialog
 
 STATUS_TEXT_BASE = "Open File: "
@@ -52,10 +56,8 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         # Set up the PDF viewer
-        self.viewer = MyPdfView(self.ui.pdfView)
-        self.viewer.setGeometry(0, 0, self.ui.pdfView.geometry().width(), self.ui.pdfView.geometry().height())
-        self.viewer.setPageMode(QPdfView.PageMode.MultiPage)
-        self.viewer.setZoomMode(QPdfView.ZoomMode.FitInView)
+        self.ui.pdfView.setPageMode(QPdfView.PageMode.MultiPage)
+        self.ui.pdfView.setZoomMode(QPdfView.ZoomMode.FitInView)
 
         # Set up the status bar
         self.ui.statusbar.addWidget(self.status_label)
@@ -92,9 +94,6 @@ class MainWindow(QMainWindow):
         # Connect text changed for the text entry field
         self.ui.editQuery.textChanged.connect(self.on_text_changed)
 
-        # Make the application a fixed size.
-        self.setFixedSize(1300, 1200)
-
     @Slot(str)
 
     # Open a file selected from the recent file list
@@ -121,7 +120,7 @@ class MainWindow(QMainWindow):
         item = self.ui.tblResults.item(row, 1)
         if item:
             self.gotopage(self.json_file.iloc[int(item.text()), 0]["page_no"]-1)
-            self.viewer.setLayout(self.json_file.iloc[int(item.text()), 0])
+            self.ui.pdfView.setLayout(self.json_file.iloc[int(item.text()), 0])
 
     # Update the content of the query text box when something is typed.
     def on_text_changed(self)->None:
@@ -176,7 +175,7 @@ class MainWindow(QMainWindow):
         self.ui.editQuery.clear()
         self.ui.tblResults.clearContents()
         self.ui.tblResults.setRowCount(0)
-        self.viewer.clearLayout()
+        self.ui.pdfView.clearLayout()
 
     # Load the PDF viewer.
     def load_viewer(self)->None:
@@ -189,7 +188,7 @@ class MainWindow(QMainWindow):
         self.clear_content()
 
         # Attach the document to the pdf viewer. 
-        self.viewer.setDocument(self.document)
+        self.ui.pdfView.setDocument(self.document)
 
         # Load the PDF document and attach it to the view
         self.document.load(self.file_path)    
@@ -271,7 +270,7 @@ class MainWindow(QMainWindow):
 
     # Go to the specified page of the PDF file.
     def gotopage(self, page:int)->None:
-        nav = self.viewer.pageNavigator()
+        nav = self.ui.pdfView.pageNavigator()
         nav.jump(page, QPoint(), nav.currentZoom())
 
     # Close the application using the application close button (X) in the upper-right corner of the app.
