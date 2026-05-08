@@ -2,5 +2,8 @@
 .vscode
 generated_files
 __pycache__
+dist
+build
 semsearch_rc.py
 *.json
+*.spec
