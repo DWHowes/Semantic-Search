@@ -4,7 +4,7 @@ This application uses [SBERT](https://arxiv.org/abs/1908.10084) to demonstrate s
 
 The user enters a query into the text box. The query text is executed by SBERT, using the parsed contents of the json file as the document corpus, with results displayed in the Query Results table. When an item in the table is selected, the PDF file jumps to the appropriate page and the selected text is highlighted with a bounding box (Figure 1).
 
-![Application Layout](screenshots/SSApp_Layout.png "SSApp_Layout (72 DPI).png")
+![Application Layout](screenshots/SSApp_Layout.png).png")
 
 Figure 1. Application layout.
 
