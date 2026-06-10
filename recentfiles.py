@@ -4,33 +4,37 @@ import json
 JSON_NAME = "ssrecent.json"
 MAX_FILES = 10
 
-class RecentFiles():
-    def __init__(self, dir:str)->None:
-        self.file_list = self.__open_recent_files(dir)
+class RecentFiles:
+    def __init__(self, run_directory: str) -> None:
+        # Enforce strict path resolution to prevent chdir relative lookups from breaking state
+        self.storage_path = os.path.abspath(os.path.join(run_directory, JSON_NAME))
+        self.file_list = self._load_recent_files()
 
-    def __open_recent_files(self, fpath:str)->list:
-        self.file_path = fpath + "\\" + JSON_NAME
-        data_list = []
+    def _load_recent_files(self) -> list:
+        if os.path.isfile(self.storage_path):
+            try:
+                with open(self.storage_path, 'r', encoding='utf-8') as file:
+                    return json.load(file)
+            except (json.JSONDecodeError, IOError):
+                return []
+        return []
 
-        if os.path.isfile(JSON_NAME):
-            with open(self.file_path, 'r') as file:
-                data_list = json.load(file)
+    def add_recent_file(self, file_path: str) -> None:
+        # Standardize path slashes for clean lookup checks
+        normalized_path = os.path.normpath(file_path)
+        
+        if normalized_path in self.file_list:
+            self.file_list.remove(normalized_path)
+            
+        self.file_list.insert(0, normalized_path)
+        self.file_list = self.file_list[:MAX_FILES]
 
-        return data_list
+    def save_recent_file_list(self) -> None:
+        try:
+            with open(self.storage_path, 'w', encoding='utf-8') as file:
+                json.dump(self.file_list, file, indent=2)
+        except IOError as e:
+            print(f"Failed to record history manifest: {e}")
 
-    def add_recent_file(self, fpath:str)->None:
-        max_length = MAX_FILES
-
-        if fpath not in self.file_list:
-            self.file_list.insert(0, fpath)
-
-        self.recent_file_list = self.file_list[:max_length]
-
-    def save_recent_file_list(self)->None:
-        if len(self.file_list):
-            with open(self.file_path, 'w') as file:
-                json.dump(self.file_list, file)
-
-    def get_recent_file_list(self)->list:
+    def get_recent_file_list(self) -> list:
         return self.file_list
-
